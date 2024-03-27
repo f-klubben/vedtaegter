@@ -1,0 +1,23 @@
+name: Build LaTeX vedtaegter
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: fklub-vedtaegter.tex
+      - name: Upload PDF document
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vedtaegter
+          path: fklub-vedtaegter.pdf
