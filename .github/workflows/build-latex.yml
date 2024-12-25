@@ -5,6 +5,8 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+  release:
+    types: [ "published" ] # Triggers when a release is published
 
 jobs:
   build_latex:
@@ -21,3 +23,23 @@ jobs:
         with:
           name: Vedtaegter
           path: fklub-vedtaegter.pdf
+
+  upload_to_release:
+    # This job runs only on release events
+    if: github.event_name == 'release'
+    needs: build_latex
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Vedtaegter
+      - name: Upload to GitHub Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./fklub-vedtaegter.pdf
+          asset_name: fklub-vedtaegter.pdf
+          asset_content_type: application/pdf
